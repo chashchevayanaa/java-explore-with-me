@@ -27,15 +27,6 @@
 		<module>ewm</module>
 	</modules>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-actuator</artifactId>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
 	<build>
 		<pluginManagement>
 			<plugins>
