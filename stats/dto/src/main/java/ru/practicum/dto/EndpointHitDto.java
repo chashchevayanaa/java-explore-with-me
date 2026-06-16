@@ -3,11 +3,11 @@ package ru.practicum.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class EndpointHitDto {
+
     private Long id;
     private String app;
     private String uri;

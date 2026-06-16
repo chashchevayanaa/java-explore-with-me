@@ -23,8 +23,8 @@
 	</properties>
 
 	<modules>
-		<module>stats</module>
 		<module>ewm</module>
+		<module>stats</module>
 	</modules>
 
 	<build>
