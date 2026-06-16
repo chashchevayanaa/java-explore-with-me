@@ -33,9 +33,9 @@ public interface StatsRepository extends JpaRepository<EndpointHit, Long> {
             "WHERE h.timestamp BETWEEN :start AND :end " +
             "AND h.uri IN :uri " +
             "GROUP BY h.app, h.uri")
-    List<ViewStats>  findStatsWithUris (@Param("start") LocalDateTime start,
-                                        @Param("end") LocalDateTime end,
-                                        @Param("uri") List<String> uri);
+    List<ViewStats> findStatsWithUris(@Param("start") LocalDateTime start,
+                                      @Param("end") LocalDateTime end,
+                                      @Param("uri") List<String> uri);
 
     // по конкретному сайту с уникальностью
     @Query("SELECT new ru.practicum.model.ViewStats(h.app, h.uri, COUNT(DISTINCT h.ip)) " +
