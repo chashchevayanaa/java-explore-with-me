@@ -18,13 +18,13 @@ public class EndpointHit {
     private Long id;
 
     @Column(nullable = false)
-    private String app; // название сервиса
+    private String app;
 
     @Column(nullable = false)
-    private String uri; // страница, куда зашли
+    private String uri;
 
     @Column(nullable = false)
-    private String ip; // конкретный чел
+    private String ip;
 
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
