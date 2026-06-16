@@ -7,15 +7,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class EndpointHitMapper {
-
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static EndpointHit toEntity(EndpointHitDto dto) {
-        return EndpointHit.builder()
-                .app(dto.getApp())
-                .uri(dto.getUri())
-                .ip(dto.getIp())
-                .timestamp(LocalDateTime.parse(dto.getTimestamp(), FORMATTER))
-                .build();
+        EndpointHit hit = new EndpointHit();
+        hit.setApp(dto.getApp());
+        hit.setUri(dto.getUri());
+        hit.setIp(dto.getIp());
+        hit.setTimestamp(LocalDateTime.parse(dto.getTimestamp(), FORMATTER));
+        return hit;
     }
 }
