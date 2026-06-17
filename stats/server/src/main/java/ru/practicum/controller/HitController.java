@@ -1,0 +1,33 @@
+package ru.practicum.controller;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.dto.EndpointHitDto;
+import ru.practicum.service.HitService;
+
+@Slf4j
+@RestController
+public class HitController {
+
+    private final HitService hitService;
+
+    public HitController(HitService hitService) {
+        this.hitService = hitService;
+    }
+
+    @PostMapping("/hit")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void saveHit(@RequestBody EndpointHitDto endpointHitDto) {
+        log.info("Received POST /hit: {}", endpointHitDto);
+        hitService.saveHit(endpointHitDto);
+        log.info("Saved hit: app={}, uri={}, ip={}, timestamp={}",
+                endpointHitDto.getApp(),
+                endpointHitDto.getUri(),
+                endpointHitDto.getIp(),
+                endpointHitDto.getTimestamp());
+    }
+}
