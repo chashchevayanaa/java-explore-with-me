@@ -24,6 +24,7 @@ public class Compilation {
     @Column(nullable = false)
     private String title;  // Заголовок подборки
 
+    @ManyToMany
     @JoinTable(
             name = "compilations_events",
             joinColumns = @JoinColumn(name = "compilation_id"),
