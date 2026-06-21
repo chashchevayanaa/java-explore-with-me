@@ -1,5 +1,6 @@
 package ru.practicum.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,6 @@ import java.util.List;
 @RequestMapping("/admin/users")
 @RequiredArgsConstructor
 public class AdminUserController {
-    private final CategoryService categoryService;
 
     private final UserService userService;
 
@@ -31,7 +31,7 @@ public class AdminUserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(NewUserRequest dto) {
+    public UserDto createUser(@Valid @RequestBody NewUserRequest dto) {
         log.info("POST /admin/users - Create user with email: {}", dto.getEmail());
         return userService.createUser(dto);
     }
