@@ -1,4 +1,4 @@
-package ru.practicum.controller;
+package ru.practicum.controller.admin;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.user.NewUserRequest;
 import ru.practicum.dto.user.UserDto;
-import ru.practicum.service.CategoryService;
 import ru.practicum.service.UserService;
 
 import java.util.List;
