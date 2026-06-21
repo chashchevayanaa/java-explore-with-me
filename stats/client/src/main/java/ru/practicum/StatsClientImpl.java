@@ -1,6 +1,5 @@
 package ru.practicum;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -14,18 +13,21 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
 public class StatsClientImpl implements StatsClient {
 
-    private static final String BASE_URL = "http://localhost:9090";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final RestTemplate restTemplate;
+    private final String baseUrl;
+
+    public StatsClientImpl(RestTemplate restTemplate, String baseUrl) {
+        this.restTemplate = restTemplate;
+        this.baseUrl = baseUrl;
+    }
 
     @Override
     public void saveHit(EndpointHitDto hitDto) {
-        String url = BASE_URL + "/hit";
+        String url = baseUrl + "/hit";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -37,7 +39,7 @@ public class StatsClientImpl implements StatsClient {
 
     @Override
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        StringBuilder urlBuilder = new StringBuilder(BASE_URL + "/stats?");
+        StringBuilder urlBuilder = new StringBuilder(baseUrl + "/stats?");
         urlBuilder.append("start=").append(URLEncoder.encode(start.format(FORMATTER), StandardCharsets.UTF_8));
         urlBuilder.append("&end=").append(URLEncoder.encode(end.format(FORMATTER), StandardCharsets.UTF_8));
 
@@ -55,7 +57,8 @@ public class StatsClientImpl implements StatsClient {
                 url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<ViewStatsDto>>() {}
+                new ParameterizedTypeReference<List<ViewStatsDto>>() {
+                }
         ); // отправили запрос
 
         return response.getBody();
