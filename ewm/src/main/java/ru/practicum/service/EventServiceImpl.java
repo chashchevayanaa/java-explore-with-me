@@ -24,6 +24,7 @@ import ru.practicum.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -73,7 +74,7 @@ public class EventServiceImpl implements EventService {
         List<Event> events = eventRepository.findByInitiatorId(userId, pageable).getContent();
 
         log.info("Found {} events for user id: {}", events.size(), userId);
-        return EventMapper.toEventShortDtoList(events);
+        return EventMapper.toEventShortDtoList(events, Map.of(), Map.of());
     }
 
     @Override

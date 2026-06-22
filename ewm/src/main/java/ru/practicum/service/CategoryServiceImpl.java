@@ -2,6 +2,9 @@ package ru.practicum.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.category.CategoryDto;
@@ -12,6 +15,10 @@ import ru.practicum.mapper.CategoryMapper;
 import ru.practicum.model.Category;
 import ru.practicum.repository.CategoryRepository;
 import ru.practicum.repository.EventRepository;
+
+import java.util.stream.Collectors;
+import java.util.List;
+
 
 @Slf4j
 @Service
@@ -62,5 +69,21 @@ public class CategoryServiceImpl implements CategoryService {
 
         categoryRepository.delete(category);
         log.info("Category with id: {} deleted", catId);
+    }
+
+    @Override
+    public List<CategoryDto> getCategories(int from, int size) {
+        Pageable pageable = PageRequest.of(from / size, size, Sort.by("id"));
+        return categoryRepository.findAll(pageable)
+                .stream()
+                .map(CategoryMapper::toCategoryDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public CategoryDto getCategory(Long catId) {
+        Category category = categoryRepository.findById(catId)
+                .orElseThrow(() -> new NotFoundException("Category with id=" + catId + " was not found"));
+        return CategoryMapper.toCategoryDto(category);
     }
 }

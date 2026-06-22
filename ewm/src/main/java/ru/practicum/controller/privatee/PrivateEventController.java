@@ -65,6 +65,7 @@ public class PrivateEventController {
     public List<ParticipationRequestDto> getEventRequests(
             @PathVariable Long userId,
             @PathVariable Long eventId) {
+        log.info("GET /users/{}/events/{}/requests - Get event requests", userId, eventId);
         return requestService.getEventRequests(userId, eventId);
     }
 

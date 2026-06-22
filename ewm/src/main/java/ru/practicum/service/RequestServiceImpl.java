@@ -19,6 +19,7 @@ import ru.practicum.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -143,7 +144,6 @@ public class RequestServiceImpl implements RequestService {
 
         log.info("Updating request status for event id: {} by user id: {}", eventId, userId);
 
-
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found for user id=" + userId));
 
@@ -187,9 +187,34 @@ public class RequestServiceImpl implements RequestService {
         }
 
         requestRepository.saveAll(requests);
-        log.info("Updated {} requests for event id: {}", requests.size(), eventId);
 
+        if (requestUpdate.getStatus() == RequestStatus.CONFIRMED) {
+            long currentConfirmed = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
+            int limit = event.getParticipantLimit();
+
+            if (limit > 0 && currentConfirmed >= limit) {
+                List<Request> remainingPending = requestRepository.findByEventIdAndStatus(eventId, RequestStatus.PENDING);
+                for (Request req : remainingPending) {
+                    req.setStatus(RequestStatus.REJECTED);
+                    rejected.add(RequestMapper.toDto(req));
+                }
+                requestRepository.saveAll(remainingPending);
+            }
+        }
+
+        log.info("Updated {} requests for event id: {}", requests.size(), eventId);
         return new EventRequestStatusUpdateResult(confirmed, rejected);
     }
 
+    public Map<Long, Long> getConfirmedRequestsMap(List<Long> eventIds) {
+        if (eventIds == null || eventIds.isEmpty()) {
+            return Map.of();
+        }
+        List<Object[]> results = requestRepository.countConfirmedByEventIds(eventIds, RequestStatus.CONFIRMED);
+        return results.stream()
+                .collect(Collectors.toMap(
+                        arr -> (Long) arr[0],
+                        arr -> (Long) arr[1]
+                ));
+    }
 }
