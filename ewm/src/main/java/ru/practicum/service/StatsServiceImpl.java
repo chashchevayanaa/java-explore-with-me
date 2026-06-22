@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.StatsClient;
+import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStatsDto;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,16 +18,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StatsServiceImpl implements StatsService {
 
-    private final LocalDateTime DEFAULT_START = LocalDateTime.of(2000, 1, 1, 0, 0);
+    private static final LocalDateTime DEFAULT_START = LocalDateTime.of(2000, 1, 1, 0, 0);
     private final StatsClient statsClient;
 
     @Override
     public void saveHit(String uri, String ip) {
+        log.info("Saving hit: uri={}, ip={}", uri, ip);
+
+        EndpointHitDto hit = new EndpointHitDto();
+        hit.setApp("ewm-main-service");
+        hit.setUri(uri);
+        hit.setIp(ip);
+        hit.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+
+        statsClient.saveHit(hit);
     }
 
     @Override
-    public long getViews(Long eventIds) {
-        return 0L;
+    public long getViews(Long eventId) {
+        return getViews(List.of(eventId)).getOrDefault(eventId, 0L);
     }
 
     @Override

@@ -206,6 +206,7 @@ public class RequestServiceImpl implements RequestService {
         return new EventRequestStatusUpdateResult(confirmed, rejected);
     }
 
+    @Override
     public Map<Long, Long> getConfirmedRequestsMap(List<Long> eventIds) {
         if (eventIds == null || eventIds.isEmpty()) {
             return Map.of();

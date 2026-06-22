@@ -2,10 +2,7 @@ package ru.practicum.controller.publicc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.category.CategoryDto;
 import ru.practicum.service.CategoryService;
 
@@ -25,4 +22,11 @@ public class PublicCategoryController {
         log.info("GET /categories?from={}&size={}", from, size);
         return categoryService.getCategories(from, size);
     }
+
+    @GetMapping("/{catId}")
+    public CategoryDto getCategory(@PathVariable Long catId) {
+        log.info("GET /categories/{}", catId);
+        return categoryService.getCategory(catId);
+    }
+
 }
