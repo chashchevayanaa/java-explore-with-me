@@ -42,19 +42,4 @@ public class PrivateRequestController {
         return requestService.cancelRequest(userId, requestId);
     }
 
-    @GetMapping("/{eventId}/requests")
-    public List<ParticipationRequestDto> getEventRequests(
-            @PathVariable Long userId,
-            @PathVariable Long eventId) {
-        return requestService.getEventRequests(userId, eventId);
-    }
-
-    @PatchMapping("/{eventId}/requests")
-    public EventRequestStatusUpdateResult updateRequestStatus(
-            @PathVariable Long userId,
-            @PathVariable Long eventId,
-            @RequestBody EventRequestStatusUpdateRequest request) {
-        log.info("PATCH /users/{}/events/{}/requests - Update request status", userId, eventId);
-        return requestService.updateRequestStatus(userId, eventId, request);
-    }
 }

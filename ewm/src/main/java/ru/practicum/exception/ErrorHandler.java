@@ -79,6 +79,19 @@ public class ErrorHandler {
         );
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleBadRequest(BadRequestException e) {
+        log.warn("Bad request: {}", e.getMessage());
+        return new ApiError(
+                HttpStatus.BAD_REQUEST.toString(),
+                "Incorrectly made request.",
+                e.getMessage(),
+                LocalDateTime.now(),
+                List.of()
+        );
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiError handleOther(Exception e) {

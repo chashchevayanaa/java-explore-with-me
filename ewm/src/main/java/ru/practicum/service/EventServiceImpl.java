@@ -11,6 +11,7 @@ import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
 import ru.practicum.dto.event.NewEventDto;
 import ru.practicum.dto.event.UpdateEventUserRequest;
+import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mapper.EventMapper;
@@ -85,6 +86,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto updateEvent(Long userId, Long eventId, UpdateEventUserRequest dto) {
         log.info("Updating event id: {} for user id: {}", eventId, userId);
 
@@ -143,7 +145,7 @@ public class EventServiceImpl implements EventService {
                     event.setState(EventState.PENDING);
                     break;
                 default:
-                    throw new IllegalArgumentException("Unknown state action: " + dto.getStateAction());
+                    throw new BadRequestException("Unknown state action: " + dto.getStateAction());
             }
         }
 

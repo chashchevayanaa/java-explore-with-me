@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.request.EventRequestStatusUpdateRequest;
 import ru.practicum.dto.request.EventRequestStatusUpdateResult;
 import ru.practicum.dto.request.ParticipationRequestDto;
+import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mapper.RequestMapper;
@@ -38,7 +39,7 @@ public class RequestServiceImpl implements RequestService {
                 .orElseThrow(() -> new NotFoundException("User with id=" + userId + " was not found"));
 
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event with id=" + userId + " was not found"));
+                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
 
         if (event.getState() != EventState.PUBLISHED) {
             throw new ConflictException("Event is not published");
@@ -53,7 +54,8 @@ public class RequestServiceImpl implements RequestService {
         }
 
         long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
-        if (confirmedRequests >= event.getParticipantLimit()) {
+        int limit = event.getParticipantLimit();
+        if (limit > 0 && confirmedRequests >= limit) {
             throw new ConflictException("The participant limit has been reached");
         }
 
@@ -79,7 +81,7 @@ public class RequestServiceImpl implements RequestService {
     public List<ParticipationRequestDto> getUserRequests(Long userId) {
         log.info("Getting requests for user id: {}", userId);
 
-        if (userRepository.existsById(userId)) {
+        if (!userRepository.existsById(userId)) {
             throw new NotFoundException("User with id=" + userId + " was not found");
         }
 
@@ -141,6 +143,7 @@ public class RequestServiceImpl implements RequestService {
 
         log.info("Updating request status for event id: {} by user id: {}", eventId, userId);
 
+
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found for user id=" + userId));
 
@@ -158,8 +161,14 @@ public class RequestServiceImpl implements RequestService {
         List<ParticipationRequestDto> rejected = new ArrayList<>();
 
         for (Request request : requests) {
+            if (!request.getEvent().getId().equals(eventId)) {
+                throw new BadRequestException("Request with id=" + request.getId() + " does not belong to event id=" + eventId);
+            }
+        }
+
+        for (Request request : requests) {
             if (request.getStatus() != RequestStatus.PENDING) {
-                continue;
+                throw new ConflictException("Request with id=" + request.getId() + " must be in PENDING status");
             }
 
             if (requestUpdate.getStatus() == RequestStatus.CONFIRMED) {
