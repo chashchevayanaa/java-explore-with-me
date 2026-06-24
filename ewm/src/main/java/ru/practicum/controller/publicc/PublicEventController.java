@@ -48,11 +48,8 @@ public class PublicEventController {
     public EventFullDto getEvent(@PathVariable Long id, HttpServletRequest request) {
         log.info("GET /events/{}", id);
 
-        try {
-            statsService.saveHit(request.getRequestURI(), request.getRemoteAddr());
-        } catch (Exception e) {
-            log.warn("Failed to save hit for uri {}: {}", request.getRequestURI(), e.getMessage());
-        }
+        statsService.saveHit("/events/" + id, request.getRemoteAddr());
+
         return eventService.getPublicEvent(id);
     }
 }

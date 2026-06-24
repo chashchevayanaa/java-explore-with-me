@@ -104,8 +104,10 @@ public class EventServiceImpl implements EventService {
             throw new ConflictException("Only pending or canceled events can be changed");
         }
 
-        if (dto.getEventDate() != null && dto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new BadRequestException("Event date must be at least 2 hours from now");
+        if (dto.getEventDate() != null && !"CANCEL".equals(dto.getStateAction())) {
+            if (dto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+                throw new BadRequestException("Event date must be at least 2 hours from now");
+            }
         }
 
         if (dto.getAnnotation() != null) {
@@ -292,6 +294,10 @@ public class EventServiceImpl implements EventService {
             throw new BadRequestException("Invalid sort value: " + sort);
         }
 
+        if (from < 0 || size <= 0) {
+            throw new BadRequestException("Invalid pagination parameters");
+        }
+
         LocalDateTime start = null;
         LocalDateTime end = null;
         if (rangeStart != null && rangeEnd != null) {
@@ -301,6 +307,14 @@ public class EventServiceImpl implements EventService {
             } catch (DateTimeParseException e) {
                 throw new BadRequestException("Invalid date format: " + (rangeStart != null ? rangeStart : rangeEnd));
             }
+        }
+
+        if (start != null && end != null && start.isAfter(end)) {
+            throw new BadRequestException("Range start must be before end");
+        }
+
+        if (text != null && text.isBlank()) {
+            throw new BadRequestException("Text must not be blank");
         }
 
         final LocalDateTime finalStart = start;
@@ -320,6 +334,7 @@ public class EventServiceImpl implements EventService {
         if (categories != null && !categories.isEmpty()) {
             spec = spec.and((root, query, cb) -> root.get("category").get("id").in(categories));
         }
+
         if (paid != null) {
             spec = spec.and((root, query, cb) -> cb.equal(root.get("paid"), paid));
         }

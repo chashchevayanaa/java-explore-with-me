@@ -4,6 +4,7 @@ import ru.practicum.dto.compilation.CompilationDto;
 import ru.practicum.dto.compilation.NewCompilationDto;
 import ru.practicum.model.Compilation;
 import ru.practicum.model.Event;
+import ru.practicum.model.EventState;
 
 import java.util.List;
 import java.util.Map;
@@ -28,8 +29,10 @@ public class CompilationMapper {
         dto.setTitle(compilation.getTitle());
 
         if (compilation.getEvents() != null) {
-            List<Event> events = compilation.getEvents().stream().collect(Collectors.toList());
-            dto.setEvents(EventMapper.toEventShortDtoList(events, confirmedMap, viewsMap));
+            List<Event> publishedEvents = compilation.getEvents().stream()
+                    .filter(e -> e.getState() == EventState.PUBLISHED)
+                    .collect(Collectors.toList());
+            dto.setEvents(EventMapper.toEventShortDtoList(publishedEvents, confirmedMap, viewsMap));
         }
 
         return dto;

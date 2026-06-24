@@ -46,9 +46,6 @@ public class CompilationServiceImpl implements CompilationService {
                 throw new NotFoundException("Some events not found");
             }
 
-            if (events.stream().anyMatch(e -> e.getState() != EventState.PUBLISHED)) {
-                throw new ConflictException("Only published events can be added to compilation");
-            }
         }
 
         Compilation compilation = CompilationMapper.toEntity(dto, events != null ? events : List.of());
@@ -96,9 +93,7 @@ public class CompilationServiceImpl implements CompilationService {
             if (events.size() != dto.getEvents().size()) {
                 throw new NotFoundException("Some events not found");
             }
-            if (events.stream().anyMatch(e -> e.getState() != EventState.PUBLISHED)) {
-                throw new ConflictException("Only published events can be added to compilation");
-            }
+
             compilation.setEvents(events.stream().collect(Collectors.toSet()));
         }
 
