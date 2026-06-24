@@ -4,11 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStatsDto;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -41,26 +41,25 @@ public class StatsClientImpl implements StatsClient {
 
     @Override
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        StringBuilder urlBuilder = new StringBuilder(baseUrl + "/stats?");
-        urlBuilder.append("start=").append(URLEncoder.encode(start.format(FORMATTER), StandardCharsets.UTF_8));
-        urlBuilder.append("&end=").append(URLEncoder.encode(end.format(FORMATTER), StandardCharsets.UTF_8));
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUrl)
+                .path("/stats")
+                .queryParam("start", start.format(FORMATTER))
+                .queryParam("end", end.format(FORMATTER))
+                .queryParam("unique", unique);
 
         if (uris != null && !uris.isEmpty()) {
-            for (String uri : uris) {
-                urlBuilder.append("&uris=").append(URLEncoder.encode(uri, StandardCharsets.UTF_8));
-            }
+            uris.forEach(u -> builder.queryParam("uris", u));
         }
 
-        urlBuilder.append("&unique=").append(unique);
-
-        String url = urlBuilder.toString();
-        log.info("Stats request URL: {}", url);
+        URI uri = builder.build().encode().toUri();
+        log.info("Stats request URI: {}", uri);
 
         ResponseEntity<List<ViewStatsDto>> response = restTemplate.exchange(
-                url,
+                uri,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<ViewStatsDto>>() {}
+                new ParameterizedTypeReference<List<ViewStatsDto>>() {
+                }
         );
 
         return response.getBody();
