@@ -35,7 +35,11 @@ public class PublicEventController {
         log.info("GET /events - text={}, categories={}, paid={}, onlyAvailable={}, sort={}, from={}, size={}",
                 text, categories, paid, onlyAvailable, sort, from, size);
 
-        statsService.saveHit(request.getRequestURI(), request.getRemoteAddr());
+        try {
+            statsService.saveHit(request.getRequestURI(), request.getRemoteAddr());
+        } catch (Exception e) {
+            log.warn("Failed to save hit for uri {}: {}", request.getRequestURI(), e.getMessage());
+        }
 
         return eventService.getPublicEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
     }
@@ -44,8 +48,11 @@ public class PublicEventController {
     public EventFullDto getEvent(@PathVariable Long id, HttpServletRequest request) {
         log.info("GET /events/{}", id);
 
-        statsService.saveHit(request.getRequestURI(), request.getRemoteAddr());
-
+        try {
+            statsService.saveHit(request.getRequestURI(), request.getRemoteAddr());
+        } catch (Exception e) {
+            log.warn("Failed to save hit for uri {}: {}", request.getRequestURI(), e.getMessage());
+        }
         return eventService.getPublicEvent(id);
     }
 }

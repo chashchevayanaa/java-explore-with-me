@@ -10,10 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.compilation.CompilationDto;
 import ru.practicum.dto.compilation.NewCompilationDto;
 import ru.practicum.dto.compilation.UpdateCompilationRequest;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mapper.CompilationMapper;
 import ru.practicum.model.Compilation;
 import ru.practicum.model.Event;
+import ru.practicum.model.EventState;
 import ru.practicum.repository.CompilationRepository;
 import ru.practicum.repository.EventRepository;
 
@@ -42,6 +44,10 @@ public class CompilationServiceImpl implements CompilationService {
             events = eventRepository.findAllById(dto.getEvents());
             if (events.size() != dto.getEvents().size()) {
                 throw new NotFoundException("Some events not found");
+            }
+
+            if (events.stream().anyMatch(e -> e.getState() != EventState.PUBLISHED)) {
+                throw new ConflictException("Only published events can be added to compilation");
             }
         }
 
