@@ -31,8 +31,8 @@ public class AdminEventController {
         return eventService.getAdminEvents(users, states, categories, rangeStart, rangeEnd, from, size);
     }
 
-    @PatchMapping
-    public EventFullDto updateAdminEvent(@PathVariable Long eventId, @Valid @RequestBody UpdateEventAdminRequest dto) {
+    @PatchMapping("/{eventId}")
+    public EventFullDto updateAdminEvent(@PathVariable Long eventId, @RequestBody UpdateEventAdminRequest dto) {
         log.info("PATCH /admin/events/{}", eventId);
         return eventService.updateAdminEvent(eventId, dto);
     }

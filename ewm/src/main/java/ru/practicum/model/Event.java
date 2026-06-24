@@ -43,21 +43,21 @@ public class Event {
     private Location location;
 
     @Column(nullable = false)
-    private Boolean paid; // Нужно ли оплачивать участие
+    private Boolean paid;
 
     @Column(name = "participant_limit", nullable = false)
-    private Integer participantLimit; // Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
+    private Integer participantLimit;
 
     @Column(name = "published_on")
-    private LocalDateTime publishedOn; // Дата и время публикации события (в формате "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime publishedOn;
 
     @Column(name = "request_moderation", nullable = false)
-    private Boolean requestModeration; // Нужна ли пре-модерация заявок на участие
+    private Boolean requestModeration;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private EventState state; // Список состояний жизненного цикла события
+    private EventState state;
 
     @Column(nullable = false, length = 120)
-    private String title; // Заголовок
+    private String title;
 }

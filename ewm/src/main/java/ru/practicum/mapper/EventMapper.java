@@ -32,7 +32,6 @@ public class EventMapper {
         return event;
     }
 
-    // Базовые методы (без счётчиков) — для Private API
     public static EventFullDto toEventFullDto(Event event) {
         EventFullDto dto = new EventFullDto();
         dto.setId(event.getId());

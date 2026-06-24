@@ -1,5 +1,7 @@
 package ru.practicum.service;
 
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,8 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.hibernate.validator.internal.engine.messageinterpolation.el.RootResolver.FORMATTER;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -39,7 +39,7 @@ public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
     private final StatsService statsService;
-    private static RequestService requestService;
+    private final RequestService requestService;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
@@ -52,7 +52,6 @@ public class EventServiceImpl implements EventService {
 
         Category category = categoryRepository.findById(dto.getCategory())
                 .orElseThrow(() -> new NotFoundException("Category with id=" + dto.getCategory() + " was not found"));
-        // Проверка: событие должно быть минимум через 2 часа
         if (dto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ConflictException("Event date must be at least 2 hours from now");
         }
@@ -100,12 +99,10 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
 
-        // проверка: можно редактировать только PENDING или CANCELED
         if (event.getState() != EventState.PENDING && event.getState() != EventState.CANCELED) {
             throw new ConflictException("Only pending or canceled events can be changed");
         }
 
-        // Проверка: если меняется дата, она должна быть минимум через 2 часа
         if (dto.getEventDate() != null && dto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ConflictException("Event date must be at least 2 hours from now");
         }
@@ -250,6 +247,9 @@ public class EventServiceImpl implements EventService {
                     if (event.getState() != EventState.PENDING) {
                         throw new ConflictException("Only pending events can be published");
                     }
+                    if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
+                        throw new ConflictException("Event date must be at least 1 hour from now");
+                    }
                     event.setState(EventState.PUBLISHED);
                     event.setPublishedOn(LocalDateTime.now());
                     break;
@@ -311,22 +311,27 @@ public class EventServiceImpl implements EventService {
 
         if (onlyAvailable) {
             spec = spec.and((root, query, cb) -> {
+                Subquery<Long> sq = query.subquery(Long.class);
+                Root<Request> req = sq.from(Request.class);
+                sq.select(cb.count(req));
+                sq.where(
+                        cb.equal(req.get("event"), root),
+                        cb.equal(req.get("status"), RequestStatus.CONFIRMED)
+                );
                 return cb.or(
                         cb.equal(root.get("participantLimit"), 0),
-                        cb.lessThan(
-                                cb.size(root.get("requests")),  // нужно добавить поле requests в Event
-                                root.get("participantLimit")
-                        )
+                        cb.lessThan(sq, root.get("participantLimit"))
                 );
             });
         }
+
         Sort sortOrder;
         if (sort != null && sort.equals("EVENT_DATE")) {
             sortOrder = Sort.by("eventDate").ascending();
         } else if (sort != null && sort.equals("VIEWS")) {
-            sortOrder = Sort.by("id").ascending(); // временно
-        } else {
             sortOrder = Sort.by("id").ascending();
+        } else {
+            sortOrder = Sort.by("eventDate").ascending();
         }
 
         Pageable pageable = PageRequest.of(from / size, size, sortOrder);
@@ -349,7 +354,7 @@ public class EventServiceImpl implements EventService {
         return EventMapper.toEventShortDtoList(events, confirmedMap, viewsMap);
     }
 
-
+    @Override
     public EventFullDto getPublicEvent(Long eventId) {
         log.info("Get public event id: {}", eventId);
 
