@@ -44,21 +44,23 @@ public class StatsServiceImpl implements StatsService {
         if (eventIds == null || eventIds.isEmpty()) {
             return Map.of();
         }
+        try {
+            List<String> uris = eventIds.stream()
+                    .map(id -> "/events/" + id)
+                    .collect(Collectors.toList());
+            List<ViewStatsDto> stats = statsClient.getStats(DEFAULT_START, LocalDateTime.now().plusYears(1), uris, true);
 
-        List<String> uris = eventIds.stream()
-                .map(id -> "/events/" + id)
-                .collect(Collectors.toList());
-
-        List<ViewStatsDto> stats = statsClient.getStats(DEFAULT_START, LocalDateTime.now().plusYears(1), uris, true);
-
-        if (stats == null || stats.isEmpty()) {
+            if (stats == null || stats.isEmpty()) {
+                return Map.of();
+            }
+            return stats.stream()
+                    .collect(Collectors.toMap(
+                            dto -> Long.parseLong(dto.getUri().replace("/events/", "")),
+                            ViewStatsDto::getHits
+                    ));
+        } catch (Exception e) {
+            log.warn("Failed to get views: {}", e.getMessage());
             return Map.of();
         }
-
-        return stats.stream()
-                .collect(Collectors.toMap(
-                        dto -> Long.parseLong(dto.getUri().replace("/events/", "")),
-                        ViewStatsDto::getHits
-                ));
     }
 }

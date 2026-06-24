@@ -96,19 +96,6 @@ public class ErrorHandler {
         );
     }
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiError handleOther(Exception e) {
-        log.error("Unexpected error: {}", e.getMessage(), e);
-        return new ApiError(
-                HttpStatus.INTERNAL_SERVER_ERROR.toString(),
-                "Internal server error.",
-                e.getMessage(),
-                LocalDateTime.now(),
-                List.of()
-        );
-    }
-
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleMissingParam(MissingServletRequestParameterException e) {
@@ -132,6 +119,19 @@ public class ErrorHandler {
         return new ApiError(
                 HttpStatus.BAD_REQUEST.toString(),
                 "Incorrectly made request.",
+                e.getMessage(),
+                LocalDateTime.now(),
+                List.of()
+        );
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiError handleOther(Exception e) {
+        log.error("Unexpected error: {}", e.getMessage(), e);
+        return new ApiError(
+                HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+                "Internal server error.",
                 e.getMessage(),
                 LocalDateTime.now(),
                 List.of()
