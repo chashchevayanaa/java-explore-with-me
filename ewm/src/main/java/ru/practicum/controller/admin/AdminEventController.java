@@ -1,5 +1,6 @@
 package ru.practicum.controller.admin;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class AdminEventController {
     }
 
     @PatchMapping("/{eventId}")
-    public EventFullDto updateAdminEvent(@PathVariable Long eventId, @RequestBody UpdateEventAdminRequest dto) {
+    public EventFullDto updateAdminEvent(@PathVariable Long eventId, @Valid @RequestBody UpdateEventAdminRequest dto) {
         log.info("PATCH /admin/events/{}", eventId);
         return eventService.updateAdminEvent(eventId, dto);
     }

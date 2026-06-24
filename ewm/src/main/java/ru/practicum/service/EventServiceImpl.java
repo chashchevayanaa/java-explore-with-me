@@ -25,6 +25,7 @@ import ru.practicum.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -53,7 +54,7 @@ public class EventServiceImpl implements EventService {
         Category category = categoryRepository.findById(dto.getCategory())
                 .orElseThrow(() -> new NotFoundException("Category with id=" + dto.getCategory() + " was not found"));
         if (dto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new ConflictException("Event date must be at least 2 hours from now");
+            throw new BadRequestException("Event date must be at least 2 hours from now");
         }
 
         Location location = LocationMapper.toLocation(dto.getLocation());
@@ -104,7 +105,7 @@ public class EventServiceImpl implements EventService {
         }
 
         if (dto.getEventDate() != null && dto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new ConflictException("Event date must be at least 2 hours from now");
+            throw new BadRequestException("Event date must be at least 2 hours from now");
         }
 
         if (dto.getAnnotation() != null) {
@@ -219,7 +220,7 @@ public class EventServiceImpl implements EventService {
         }
         if (dto.getEventDate() != null) {
             if (dto.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
-                throw new ConflictException("Event date must be at least 1 hour from now");
+                throw new BadRequestException("Event date must be at least 1 hour from now");
             }
             event.setEventDate(dto.getEventDate());
         }
@@ -282,6 +283,29 @@ public class EventServiceImpl implements EventService {
                                                String sort, int from, int size) {
         log.info("Public search events: text={}, categories={}, paid={}, onlyAvailable={}, sort={}",
                 text, categories, paid, onlyAvailable, sort);
+
+        if ((rangeStart == null) != (rangeEnd == null)) {
+            throw new BadRequestException("Range dates must be specified together");
+        }
+
+        if (sort != null && !sort.equals("EVENT_DATE") && !sort.equals("VIEWS")) {
+            throw new BadRequestException("Invalid sort value: " + sort);
+        }
+
+        LocalDateTime start = null;
+        LocalDateTime end = null;
+        if (rangeStart != null && rangeEnd != null) {
+            try {
+                start = LocalDateTime.parse(rangeStart, FORMATTER);
+                end = LocalDateTime.parse(rangeEnd, FORMATTER);
+            } catch (DateTimeParseException e) {
+                throw new BadRequestException("Invalid date format: " + (rangeStart != null ? rangeStart : rangeEnd));
+            }
+        }
+
+        final LocalDateTime finalStart = start;
+        final LocalDateTime finalEnd = end;
+
         Specification<Event> spec = Specification.where(null);
         spec = spec.and((root, query, cb) -> cb.equal(root.get("state"), EventState.PUBLISHED));
 
@@ -299,10 +323,9 @@ public class EventServiceImpl implements EventService {
         if (paid != null) {
             spec = spec.and((root, query, cb) -> cb.equal(root.get("paid"), paid));
         }
-        if (rangeStart != null && rangeEnd != null) {
-            LocalDateTime start = LocalDateTime.parse(rangeStart, FORMATTER);
-            LocalDateTime end = LocalDateTime.parse(rangeEnd, FORMATTER);
-            spec = spec.and((root, query, cb) -> cb.between(root.get("eventDate"), start, end));
+
+        if (finalStart != null && finalEnd != null) {
+            spec = spec.and((root, query, cb) -> cb.between(root.get("eventDate"), finalStart, finalEnd));
         } else {
             spec = spec.and((root, query, cb) ->
                     cb.greaterThan(root.get("eventDate"), LocalDateTime.now())

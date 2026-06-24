@@ -49,10 +49,11 @@ public class StatsServiceImpl implements StatsService {
                 .map(id -> "/events/" + id)
                 .collect(Collectors.toList());
 
-        LocalDateTime start = LocalDateTime.of(2000, 1, 1, 0, 0);
-        LocalDateTime end = LocalDateTime.now().plusYears(1);
+        List<ViewStatsDto> stats = statsClient.getStats(DEFAULT_START, LocalDateTime.now().plusYears(1), uris, true);
 
-        List<ViewStatsDto> stats = statsClient.getStats(start, end, uris, true);
+        if (stats == null || stats.isEmpty()) {
+            return Map.of();
+        }
 
         return stats.stream()
                 .collect(Collectors.toMap(
