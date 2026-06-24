@@ -16,8 +16,17 @@ import java.util.List;
 @RequestMapping("/events")
 @RequiredArgsConstructor
 public class PublicEventController {
+
     private final EventService eventService;
     private final StatsService statsService;
+
+    private String getClientIp(HttpServletRequest request) {
+        String xff = request.getHeader("X-Forwarded-For");
+        if (xff != null && !xff.isBlank()) {
+            return xff.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
+    }
 
     @GetMapping
     public List<EventShortDto> getEvents(
@@ -36,7 +45,7 @@ public class PublicEventController {
                 text, categories, paid, onlyAvailable, sort, from, size);
 
         try {
-            statsService.saveHit(request.getRequestURI(), request.getRemoteAddr());
+            statsService.saveHit(request.getRequestURI(), getClientIp(request));
         } catch (Exception e) {
             log.warn("Failed to save hit for uri {}: {}", request.getRequestURI(), e.getMessage());
         }
@@ -48,7 +57,7 @@ public class PublicEventController {
     public EventFullDto getEvent(@PathVariable Long id, HttpServletRequest request) {
         log.info("GET /events/{}", id);
 
-        statsService.saveHit("/events/" + id, request.getRemoteAddr());
+        statsService.saveHit("/events/" + id, getClientIp(request));
 
         return eventService.getPublicEvent(id);
     }

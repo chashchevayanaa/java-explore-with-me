@@ -57,7 +57,7 @@ public class CompilationServiceImpl implements CompilationService {
         );
 
         log.info("Compilation created with id: {}", saved.getId());
-        return CompilationMapper.toDto(saved, confirmedMap, viewsMap);
+        return CompilationMapper.toDto(saved, confirmedMap, viewsMap, false);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class CompilationServiceImpl implements CompilationService {
                 updated.getEvents().stream().map(Event::getId).collect(Collectors.toList())
         );
 
-        return CompilationMapper.toDto(updated, confirmedMap, viewsMap);
+        return CompilationMapper.toDto(updated, confirmedMap, viewsMap, false);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class CompilationServiceImpl implements CompilationService {
         Map<Long, Long> viewsMap = statsService.getViews(allEventIds);
 
         return compilations.stream()
-                .map(c -> CompilationMapper.toDto(c, confirmedMap, viewsMap))
+                .map(c -> CompilationMapper.toDto(c, confirmedMap, viewsMap, true))
                 .collect(Collectors.toList());
     }
 
@@ -148,6 +148,6 @@ public class CompilationServiceImpl implements CompilationService {
         Map<Long, Long> confirmedMap = requestService.getConfirmedRequestsMap(eventIds);
         Map<Long, Long> viewsMap = statsService.getViews(eventIds);
 
-        return CompilationMapper.toDto(compilation, confirmedMap, viewsMap);
+        return CompilationMapper.toDto(compilation, confirmedMap, viewsMap, true);
     }
 }

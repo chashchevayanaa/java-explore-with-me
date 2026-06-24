@@ -22,17 +22,18 @@ public class CompilationMapper {
 
     public static CompilationDto toDto(Compilation compilation,
                                        Map<Long, Long> confirmedMap,
-                                       Map<Long, Long> viewsMap) {
+                                       Map<Long, Long> viewsMap,
+                                       boolean onlyPublished) {
         CompilationDto dto = new CompilationDto();
         dto.setId(compilation.getId());
         dto.setPinned(compilation.getPinned());
         dto.setTitle(compilation.getTitle());
 
         if (compilation.getEvents() != null) {
-            List<Event> publishedEvents = compilation.getEvents().stream()
-                    .filter(e -> e.getState() == EventState.PUBLISHED)
+            List<Event> events = compilation.getEvents().stream()
+                    .filter(e -> !onlyPublished || e.getState() == EventState.PUBLISHED)
                     .collect(Collectors.toList());
-            dto.setEvents(EventMapper.toEventShortDtoList(publishedEvents, confirmedMap, viewsMap));
+            dto.setEvents(EventMapper.toEventShortDtoList(events, confirmedMap, viewsMap));
         }
 
         return dto;
