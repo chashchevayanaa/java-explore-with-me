@@ -1,5 +1,6 @@
 package ru.practicum;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@Slf4j
 public class StatsClientImpl implements StatsClient {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -27,6 +29,7 @@ public class StatsClientImpl implements StatsClient {
     @Override
     public void saveHit(EndpointHitDto hitDto) {
         String url = baseUrl + "/hit";
+        log.debug("Saving hit to URL: {}", url);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -50,15 +53,15 @@ public class StatsClientImpl implements StatsClient {
 
         urlBuilder.append("&unique=").append(unique);
 
-        String url = urlBuilder.toString(); // собрали URL
+        String url = urlBuilder.toString();
+        log.info("Stats request URL: {}", url);
 
         ResponseEntity<List<ViewStatsDto>> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<ViewStatsDto>>() {
-                }
-        ); // отправили запрос
+                new ParameterizedTypeReference<List<ViewStatsDto>>() {}
+        );
 
         return response.getBody();
     }

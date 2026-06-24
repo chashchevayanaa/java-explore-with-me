@@ -12,9 +12,11 @@ import ru.practicum.dto.location.LocationDto;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(value = {
+        "id", "state", "createdOn", "publishedOn",
+        "views", "confirmedRequests", "initiator"
+})
 public class UpdateEventUserRequest {
 
     @Size(min = 20, max = 2000)
