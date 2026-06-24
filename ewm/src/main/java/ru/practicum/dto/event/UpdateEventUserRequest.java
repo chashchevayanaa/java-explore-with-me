@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-@JsonIgnoreProperties(value = {
-        "id", "state", "createdOn", "publishedOn",
-        "views", "confirmedRequests", "initiator"
-})
+@JsonIgnoreProperties(
+        value = {"id", "state", "createdOn", "publishedOn", "views", "confirmedRequests", "initiator"},
+        ignoreUnknown = true
+)
 public class UpdateEventUserRequest {
 
     @Size(min = 20, max = 2000)

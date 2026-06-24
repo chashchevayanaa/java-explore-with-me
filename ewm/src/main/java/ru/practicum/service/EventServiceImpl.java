@@ -104,14 +104,16 @@ public class EventServiceImpl implements EventService {
             throw new ConflictException("Only pending or canceled events can be changed");
         }
 
-        if ("CANCEL".equals(dto.getStateAction())) {
+        boolean isCancel = "CANCEL".equals(dto.getStateAction()) || "CANCEL_REVIEW".equals(dto.getStateAction());
+
+        if (isCancel) {
             event.setState(EventState.CANCELED);
             Event saved = eventRepository.save(event);
             log.info("Event cancelled with id: {}", saved.getId());
             return EventMapper.toEventFullDto(saved);
         }
 
-        if (dto.getEventDate() != null && !"CANCEL".equals(dto.getStateAction())) {
+        if (dto.getEventDate() != null && !isCancel) {
             if (dto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
                 throw new BadRequestException("Event date must be at least 2 hours from now");
             }
@@ -153,6 +155,7 @@ public class EventServiceImpl implements EventService {
         if (dto.getStateAction() != null) {
             switch (dto.getStateAction()) {
                 case "CANCEL":
+                case "CANCEL_REVIEW":
                     event.setState(EventState.CANCELED);
                     break;
                 case "SEND_TO_REVIEW":
