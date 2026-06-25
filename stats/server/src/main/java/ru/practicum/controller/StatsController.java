@@ -2,9 +2,11 @@ package ru.practicum.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.model.ViewStats;
 import ru.practicum.service.StatsService;
 
@@ -31,6 +33,10 @@ public class StatsController {
             @RequestParam(defaultValue = "false") boolean unique) {
 
         log.info("Received GET /stats: start={}, end={}, uris={}, unique={}", start, end, uris, unique);
+
+        if (start.isAfter(end)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
 
         if (uris != null) {
             uris = uris.stream()

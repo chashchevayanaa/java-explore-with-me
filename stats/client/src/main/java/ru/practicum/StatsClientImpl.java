@@ -1,31 +1,35 @@
 package ru.practicum;
 
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStatsDto;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
+@Slf4j
 public class StatsClientImpl implements StatsClient {
 
-    private static final String BASE_URL = "http://localhost:9090";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final RestTemplate restTemplate;
+    private final String baseUrl;
+
+    public StatsClientImpl(RestTemplate restTemplate, String baseUrl) {
+        this.restTemplate = restTemplate;
+        this.baseUrl = baseUrl;
+    }
 
     @Override
     public void saveHit(EndpointHitDto hitDto) {
-        String url = BASE_URL + "/hit";
+        String url = baseUrl + "/hit";
+        log.debug("Saving hit to URL: {}", url);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -37,26 +41,26 @@ public class StatsClientImpl implements StatsClient {
 
     @Override
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        StringBuilder urlBuilder = new StringBuilder(BASE_URL + "/stats?");
-        urlBuilder.append("start=").append(URLEncoder.encode(start.format(FORMATTER), StandardCharsets.UTF_8));
-        urlBuilder.append("&end=").append(URLEncoder.encode(end.format(FORMATTER), StandardCharsets.UTF_8));
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUrl)
+                .path("/stats")
+                .queryParam("start", start.format(FORMATTER))
+                .queryParam("end", end.format(FORMATTER))
+                .queryParam("unique", unique);
 
         if (uris != null && !uris.isEmpty()) {
-            for (String uri : uris) {
-                urlBuilder.append("&uris=").append(URLEncoder.encode(uri, StandardCharsets.UTF_8));
-            }
+            uris.forEach(u -> builder.queryParam("uris", u));
         }
 
-        urlBuilder.append("&unique=").append(unique);
-
-        String url = urlBuilder.toString(); // собрали URL
+        URI uri = builder.build().encode().toUri();
+        log.info("Stats request URI: {}", uri);
 
         ResponseEntity<List<ViewStatsDto>> response = restTemplate.exchange(
-                url,
+                uri,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<ViewStatsDto>>() {}
-        ); // отправили запрос
+                new ParameterizedTypeReference<List<ViewStatsDto>>() {
+                }
+        );
 
         return response.getBody();
     }
