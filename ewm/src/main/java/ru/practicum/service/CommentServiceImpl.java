@@ -66,7 +66,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto updateComment(Long userId, Long eventId, UpdateCommentRequest dto) {
         log.info("Updating comment for user id: {} on event id: {}", userId, eventId);
 
-        Comment comment = commentRepository.findByAuthorIdAndEventId(eventId, userId)
+        Comment comment = commentRepository.findByAuthorIdAndEventId(userId, userId)
                 .orElseThrow(() -> new NotFoundException("Comment not found"));
 
         if (!comment.getAuthor().getId().equals(userId)) {
@@ -86,7 +86,7 @@ public class CommentServiceImpl implements CommentService {
     public void deleteComment(Long userId, Long eventId, Long commentId) {
         log.info("Deleting comment with id: {}", commentId);
 
-        Comment comment = commentRepository.findByAuthorIdAndEventId(eventId, userId)
+        Comment comment = commentRepository.findByAuthorIdAndEventId(userId, userId)
                 .orElseThrow(() -> new NotFoundException("Comment not found"));
 
         if (!comment.getAuthor().getId().equals(userId)) {
@@ -140,7 +140,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto getComment(Long eventId, Long commentId) {
         log.info("Getting comment id: {} for event id: {}", commentId, eventId);
 
-        Comment comment = commentRepository.findByAuthorIdAndEventId(commentId, eventId)
+        Comment comment = commentRepository.findByIdAndEventId(commentId, eventId)
                 .orElseThrow(() -> new NotFoundException("Comment not found"));
 
         return CommentMapper.toCommentDto(comment);

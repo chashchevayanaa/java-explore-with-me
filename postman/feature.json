@@ -1,11 +1,11 @@
 {
   "info": {
-    "_postman_id": "d1abeaa5-03d4-473c-bd00-68b70dd5f104",
+    "_postman_id": "fe3ba62f-f649-4fe6-9df8-90e1c3cbacae",
     "name": "feature_comments",
     "description": "ExploreWithMe — комментарии к событиям (feature_comments)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "50452983",
-    "_collection_link": "https://go.postman.co/collection/50452983-d1abeaa5-03d4-473c-bd00-68b70dd5f104?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/50452983-fe3ba62f-f649-4fe6-9df8-90e1c3cbacae?source=collection_link"
   },
   "item": [
     {
@@ -357,19 +357,21 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Create comment 1 — 201', function () { pm.response.to.have.status(201); });",
-                  "pm.response.to.be.withBody;",
-                  "pm.response.to.be.json;",
-                  "const data = pm.response.json();",
-                  "pm.expect(data).to.have.property('id');",
-                  "pm.expect(data).to.have.property('text');",
-                  "pm.expect(data).to.have.property('created');",
-                  "pm.expect(data).to.have.property('author');",
-                  "pm.expect(data.author).to.have.property('id');",
-                  "pm.expect(data.author).to.have.property('name');",
-                  "pm.expect(data).to.have.property('eventId');",
-                  "pm.expect(pm.response.json().text).to.eql('comment1 to event1 from user1');",
-                  "pm.collectionVariables.set('commentId1', pm.response.json().id);"
+                  "pm.test('Create comment 1 — 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    pm.response.to.be.withBody;",
+                  "    pm.response.to.be.json;",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('id');",
+                  "    pm.expect(body).to.have.property('text');",
+                  "    pm.expect(body).to.have.property('created');",
+                  "    pm.expect(body).to.have.property('author');",
+                  "    pm.expect(body.author).to.have.property('id');",
+                  "    pm.expect(body.author).to.have.property('name');",
+                  "    pm.expect(body).to.have.property('eventId');",
+                  "    pm.expect(body.text).to.eql('comment1 to event1 from user1');",
+                  "    pm.collectionVariables.set('commentId1', body.id);",
+                  "});"
                 ]
               }
             }
@@ -504,19 +506,21 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Update comment 1 — 200', function () { pm.response.to.have.status(200); });",
-                  "pm.response.to.be.withBody;",
-                  "pm.response.to.be.json;",
-                  "const data = pm.response.json();",
-                  "pm.expect(data).to.have.property('id');",
-                  "pm.expect(data).to.have.property('text');",
-                  "pm.expect(data).to.have.property('created');",
-                  "pm.expect(data).to.have.property('author');",
-                  "pm.expect(data.author).to.have.property('id');",
-                  "pm.expect(data.author).to.have.property('name');",
-                  "pm.expect(data).to.have.property('eventId');",
-                  "pm.expect(pm.response.json().text).to.eql('updated comment 1');",
-                  "pm.expect(pm.response.json()).to.have.property('editedOn');"
+                  "pm.test('Update comment 1 — 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.response.to.be.withBody;",
+                  "    pm.response.to.be.json;",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('id');",
+                  "    pm.expect(body).to.have.property('text');",
+                  "    pm.expect(body).to.have.property('created');",
+                  "    pm.expect(body).to.have.property('author');",
+                  "    pm.expect(body.author).to.have.property('id');",
+                  "    pm.expect(body.author).to.have.property('name');",
+                  "    pm.expect(body).to.have.property('eventId');",
+                  "    pm.expect(body.text).to.eql('updated comment 1');",
+                  "    pm.expect(body).to.have.property('editedOn');",
+                  "});"
                 ]
               }
             }
@@ -750,18 +754,20 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Get comment by id — 200', function () { pm.response.to.have.status(200); });",
-                  "pm.response.to.be.withBody;",
-                  "pm.response.to.be.json;",
-                  "const data = pm.response.json();",
-                  "pm.expect(data).to.have.property('id');",
-                  "pm.expect(data).to.have.property('text');",
-                  "pm.expect(data).to.have.property('created');",
-                  "pm.expect(data).to.have.property('author');",
-                  "pm.expect(data.author).to.have.property('id');",
-                  "pm.expect(data.author).to.have.property('name');",
-                  "pm.expect(data).to.have.property('eventId');",
-                  "pm.expect(pm.response.json().text).to.eql('comment2 from user2 to event1');"
+                  "pm.test('Get comment by id — 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.response.to.be.withBody;",
+                  "    pm.response.to.be.json;",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('id');",
+                  "    pm.expect(body).to.have.property('text');",
+                  "    pm.expect(body).to.have.property('created');",
+                  "    pm.expect(body).to.have.property('author');",
+                  "    pm.expect(body.author).to.have.property('id');",
+                  "    pm.expect(body.author).to.have.property('name');",
+                  "    pm.expect(body).to.have.property('eventId');",
+                  "    pm.expect(body.text).to.eql('comment2 from user2 to event1');",
+                  "});"
                 ]
               }
             }
