@@ -1,0 +1,1073 @@
+{
+  "info": {
+    "_postman_id": "fe3ba62f-f649-4fe6-9df8-90e1c3cbacae",
+    "name": "feature_comments",
+    "description": "ExploreWithMe — комментарии к событиям (feature_comments)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50452983",
+    "_collection_link": "https://go.postman.co/collection/50452983-fe3ba62f-f649-4fe6-9df8-90e1c3cbacae?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Setup",
+      "item": [
+        {
+          "name": "Create user 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Create user 1 — 201', function () { pm.response.to.have.status(201); });",
+                  "if (!pm.response.code || pm.response.code >= 400) {",
+                  "    console.error('Setup step failed:', pm.info.requestName, pm.response.code, pm.response.text());",
+                  "    pm.execution.setNextRequest(null);",
+                  "}",
+                  "pm.collectionVariables.set('userId1', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Comment User One\",\n    \"email\": \"comment-user1-{{ts}}@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create user 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Create user 2 — 201', function () { pm.response.to.have.status(201); });",
+                  "if (!pm.response.code || pm.response.code >= 400) {",
+                  "    console.error('Setup step failed:', pm.info.requestName, pm.response.code, pm.response.text());",
+                  "    pm.execution.setNextRequest(null);",
+                  "}",
+                  "pm.collectionVariables.set('userId2', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Comment User Two\",\n    \"email\": \"comment-user2-{{ts}}@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Create category — 201', function () { pm.response.to.have.status(201); });",
+                  "if (!pm.response.code || pm.response.code >= 400) {",
+                  "    console.error('Setup step failed:', pm.info.requestName, pm.response.code, pm.response.text());",
+                  "    pm.execution.setNextRequest(null);",
+                  "}",
+                  "pm.collectionVariables.set('categoryId', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Cat {{ts}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create event 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Create event 1 — 201', function () { pm.response.to.have.status(201); });",
+                  "if (!pm.response.code || pm.response.code >= 400) {",
+                  "    console.error('Setup step failed:', pm.info.requestName, pm.response.code, pm.response.text());",
+                  "    pm.execution.setNextRequest(null);",
+                  "}",
+                  "pm.collectionVariables.set('eventId1', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"annotation\": \"Event for comments testing annotation text\",\n    \"category\": {{categoryId}},\n    \"description\": \"Event description for comments feature testing long enough\",\n    \"eventDate\": \"2027-06-15 12:00:00\",\n    \"location\": {\n        \"lat\": 55.751,\n        \"lon\": 37.621\n    },\n    \"title\": \"Comments Test Event One\",\n    \"paid\": false,\n    \"participantLimit\": 0,\n    \"requestModeration\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId1}}/events",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId1}}",
+                "events"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create event 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Create event 2 — 201', function () { pm.response.to.have.status(201); });",
+                  "if (!pm.response.code || pm.response.code >= 400) {",
+                  "    console.error('Setup step failed:', pm.info.requestName, pm.response.code, pm.response.text());",
+                  "    pm.execution.setNextRequest(null);",
+                  "}",
+                  "pm.collectionVariables.set('eventId2', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"annotation\": \"Second event for comments testing annotation\",\n    \"category\": {{categoryId}},\n    \"description\": \"Event description for comments feature testing long enough\",\n    \"eventDate\": \"2027-06-16 14:00:00\",\n    \"location\": {\n        \"lat\": 55.752,\n        \"lon\": 37.622\n    },\n    \"title\": \"Comments Test Event Two\",\n    \"paid\": false,\n    \"participantLimit\": 0,\n    \"requestModeration\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId1}}/events",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId1}}",
+                "events"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Publish event 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Publish event 1 — 200', function () { pm.response.to.have.status(200); });",
+                  "if (!pm.response.code || pm.response.code >= 400) {",
+                  "    console.error('Setup step failed:', pm.info.requestName, pm.response.code, pm.response.text());",
+                  "    pm.execution.setNextRequest(null);",
+                  "}",
+                  "pm.expect(pm.response.json().state).to.eql('PUBLISHED');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"stateAction\": \"PUBLISH_EVENT\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/events/{{eventId1}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "events",
+                "{{eventId1}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Publish event 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Publish event 2 — 200', function () { pm.response.to.have.status(200); });",
+                  "if (!pm.response.code || pm.response.code >= 400) {",
+                  "    console.error('Setup step failed:', pm.info.requestName, pm.response.code, pm.response.text());",
+                  "    pm.execution.setNextRequest(null);",
+                  "}",
+                  "pm.expect(pm.response.json().state).to.eql('PUBLISHED');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"stateAction\": \"PUBLISH_EVENT\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/events/{{eventId2}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "events",
+                "{{eventId2}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        {
+          "name": "Create comment 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Create comment 1 — 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    pm.response.to.be.withBody;",
+                  "    pm.response.to.be.json;",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('id');",
+                  "    pm.expect(body).to.have.property('text');",
+                  "    pm.expect(body).to.have.property('created');",
+                  "    pm.expect(body).to.have.property('author');",
+                  "    pm.expect(body.author).to.have.property('id');",
+                  "    pm.expect(body.author).to.have.property('name');",
+                  "    pm.expect(body).to.have.property('eventId');",
+                  "    pm.expect(body.text).to.eql('comment1 to event1 from user1');",
+                  "    pm.collectionVariables.set('commentId1', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"text\": \"comment1 to event1 from user1\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId1}}/events/{{eventId1}}/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId1}}",
+                "events",
+                "{{eventId1}}",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create duplicate comment — 409",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Duplicate comment — 409', function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"text\": \"duplicate comment attempt\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId1}}/events/{{eventId1}}/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId1}}",
+                "events",
+                "{{eventId1}}",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create comment short text — 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Short text — 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"text\": \"1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId2}}/events/{{eventId1}}/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId2}}",
+                "events",
+                "{{eventId1}}",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update comment 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Update comment 1 — 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.response.to.be.withBody;",
+                  "    pm.response.to.be.json;",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('id');",
+                  "    pm.expect(body).to.have.property('text');",
+                  "    pm.expect(body).to.have.property('created');",
+                  "    pm.expect(body).to.have.property('author');",
+                  "    pm.expect(body.author).to.have.property('id');",
+                  "    pm.expect(body.author).to.have.property('name');",
+                  "    pm.expect(body).to.have.property('eventId');",
+                  "    pm.expect(body.text).to.eql('updated comment 1');",
+                  "    pm.expect(body).to.have.property('editedOn');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"text\": \"updated comment 1\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId1}}/events/{{eventId1}}/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId1}}",
+                "events",
+                "{{eventId1}}",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update comment invalid text — 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Update invalid text — 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"text\": \"bad\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId1}}/events/{{eventId1}}/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId1}}",
+                "events",
+                "{{eventId1}}",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create comment 2 (user2, event1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Create comment 2 — 201', function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set('commentId2', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"text\": \"comment2 from user2 to event1\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId2}}/events/{{eventId1}}/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId2}}",
+                "events",
+                "{{eventId1}}",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create comment 3 (user1, event2)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Create comment 3 — 201', function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set('commentId3', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"text\": \"comment3 from user1 to event2\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId1}}/events/{{eventId2}}/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId1}}",
+                "events",
+                "{{eventId2}}",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get comments by user 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Get user comments — 200', function () { pm.response.to.have.status(200); });",
+                  "pm.response.to.be.json;",
+                  "pm.expect(pm.response.json()).to.be.an('array');",
+                  "pm.expect(pm.response.json().length).to.be.at.least(2);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId1}}/comments?from=0&size=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId1}}",
+                "comments"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get comment 2 by id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Get comment by id — 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.response.to.be.withBody;",
+                  "    pm.response.to.be.json;",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('id');",
+                  "    pm.expect(body).to.have.property('text');",
+                  "    pm.expect(body).to.have.property('created');",
+                  "    pm.expect(body).to.have.property('author');",
+                  "    pm.expect(body.author).to.have.property('id');",
+                  "    pm.expect(body.author).to.have.property('name');",
+                  "    pm.expect(body).to.have.property('eventId');",
+                  "    pm.expect(body.text).to.eql('comment2 from user2 to event1');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/events/{{eventId1}}/comments/{{commentId2}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                "{{eventId1}}",
+                "comments",
+                "{{commentId2}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get not existed comment — 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Get missing comment — 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/events/{{eventId1}}/comments/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                "{{eventId1}}",
+                "comments",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get comments by event 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Get comments by event — 200', function () { pm.response.to.have.status(200); });",
+                  "pm.response.to.be.json;",
+                  "pm.expect(pm.response.json()).to.be.an('array');",
+                  "pm.expect(pm.response.json().length).to.eql(2);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/events/{{eventId1}}/comments?from=0&size=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                "{{eventId1}}",
+                "comments"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete comment 1 by user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Delete comment by user — 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId1}}/events/{{eventId1}}/comments/{{commentId1}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId1}}",
+                "events",
+                "{{eventId1}}",
+                "comments",
+                "{{commentId1}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get deleted comment — 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Deleted comment — 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/events/{{eventId1}}/comments/{{commentId1}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                "{{eventId1}}",
+                "comments",
+                "{{commentId1}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete comment 2 by admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Delete comment by admin — 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/comments/{{commentId2}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "comments",
+                "{{commentId2}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if (!pm.collectionVariables.get('ts')) {",
+          "    pm.collectionVariables.set('ts', Date.now().toString());",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "ts",
+      "value": ""
+    },
+    {
+      "key": "userId1",
+      "value": ""
+    },
+    {
+      "key": "userId2",
+      "value": ""
+    },
+    {
+      "key": "categoryId",
+      "value": ""
+    },
+    {
+      "key": "eventId1",
+      "value": ""
+    },
+    {
+      "key": "eventId2",
+      "value": ""
+    },
+    {
+      "key": "commentId1",
+      "value": ""
+    },
+    {
+      "key": "commentId2",
+      "value": ""
+    },
+    {
+      "key": "commentId3",
+      "value": ""
+    }
+  ]
+}
